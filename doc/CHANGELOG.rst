@@ -7,6 +7,9 @@ DAGMC Changelog
 Next version
 ====================
 
+v3.2.4
+====================
+
 **Changed:**
 
   * Adding info messages to CMake output for double down (#962)
