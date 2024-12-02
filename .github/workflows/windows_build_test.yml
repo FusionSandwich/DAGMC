@@ -41,7 +41,7 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-activate-base: true
+          auto-activate-base: false
           activate-environment: ""
 
       # yaml-cpp package has conflicting gtest headers and is not needed for this project
@@ -50,7 +50,6 @@ jobs:
         run: |
           conda install curl eigen
           conda install -c conda-forge hdf5=1.10.6
-          conda remove -y yaml-cpp
 
       - name: Environment Variables
         shell: bash -l {0}
