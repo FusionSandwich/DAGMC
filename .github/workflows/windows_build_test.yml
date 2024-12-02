@@ -50,6 +50,7 @@ jobs:
         run: |
           conda install curl eigen
           conda install -c conda-forge hdf5=1.10.6
+          conda remove -y yaml-cpp
 
       - name: Environment Variables
         shell: bash -l {0}
