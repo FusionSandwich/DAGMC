@@ -49,7 +49,7 @@ jobs:
         shell:  bash -l {0}
         run: |
           conda install curl eigen
-          conda install -c conda-forge hdf5
+          conda install -c conda-forge hdf5=1.10.6
 
       - name: Environment Variables
         shell: bash -l {0}
@@ -77,14 +77,9 @@ jobs:
                 -DCMAKE_INSTALL_PREFIX=../install_dir/ \
                 -DEIGEN3_DIR="${CONDA_LOC}/include/eigen3" \
                 -DHDF5_ROOT="${CONDA_LOC}" \
-                -DHDF5_hdf5_LIBRARY_RELEASE="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
-                -DCMAKE_EXE_LINKER_FLAGS="/std:c++latest -DH5_BUILT_AS_DYNAMIC_LIB" \
-                -DCMAKE_MODULE_LINKER_FLAGS="/std:c++latest" \
-                -DCMAKE_SHARED_LINKER_FLAGS="/std:c++latest" \
+                -DHDF5_LIBRARIES="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
                 -DCMAKE_STATIC_LINKER_FLAGS="" \
-                -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_C_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe" \
-                -DCMAKE_CXX_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe"
+                -DCMAKE_BUILD_TYPE=Release
           cmake --build . --config Release
           cmake --install . --config Release
 
@@ -112,7 +107,7 @@ jobs:
                 -DBUILD_TESTS=ON \
                 -DMOAB_DIR=../install_dir \
                 -DHDF5_ROOT="${CONDA_LOC}" \
-                -DHDF5_hdf5_LIBRARY_RELEASE="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
+                -DHDF5_LIBRARIES="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
                 -DCMAKE_INSTALL_PREFIX=../install_dir/ \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
                 -DCMAKE_MODULE_LINKER_FLAGS="" \
