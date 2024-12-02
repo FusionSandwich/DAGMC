@@ -105,6 +105,7 @@ jobs:
                 -DBUILD_MAKE_WATERTIGHT=ON \
                 -DBUILD_OVERLAP_CHECK=OFF \
                 -DBUILD_TESTS=ON \
+                -DMOAB_DIR=../install_dir \
                 -DCMAKE_PREFIX_PATH="${CONDA_LOC}" \
                 -DCMAKE_INSTALL_PREFIX=../install_dir/ \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
