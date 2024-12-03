@@ -25,6 +25,7 @@ v3.2.4
   * CMake error message update (#960)
   * Updated documentation to build dependencies (#963)
   * Pause support for Windows (#966)
+  * Localize invocation of git submodule for PyNE (#968)
 
 v3.2.3
 ====================
