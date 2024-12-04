@@ -41,6 +41,7 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
+          auto-update-conda: true
           auto-activate-base: false
           activate-environment: ""
 
@@ -49,7 +50,7 @@ jobs:
         shell:  bash -l {0}
         run: |
           conda install curl eigen
-          conda install -c conda-forge hdf5=1.10.6
+          conda install -c conda-forge hdf5
 
       - name: Environment Variables
         shell: bash -l {0}
