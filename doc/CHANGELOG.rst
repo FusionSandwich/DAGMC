@@ -26,6 +26,7 @@ v3.2.4
   * Updated documentation to build dependencies (#963)
   * Pause support for Windows (#966)
   * Localize invocation of git submodule for PyNE (#968)
+  * Fixed the name of the Graveyard and the Vaccuum to mat:Graveyard and mat:Vacuum (and lower case) (#971)
 
 v3.2.3
 ====================
