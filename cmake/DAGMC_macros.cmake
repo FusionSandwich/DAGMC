@@ -73,7 +73,7 @@ macro (dagmc_setup_options)
 
   option(DOUBLE_DOWN "Enable ray tracing with Embree via double down" OFF)
 
-  option(DDL_INSTALL_DEPS "Enable automatic downloading of MOAB dependency" OFF)
+  option(PULL_INSTALL_MOAB "Enable automatic downloading of MOAB dependency" OFF)
   
   if (BUILD_ALL)
     set(BUILD_MCNP5  ON)
@@ -256,7 +256,7 @@ macro (dagmc_install_library lib_name)
             LIBRARY DESTINATION ${INSTALL_LIB_DIR}
             PUBLIC_HEADER DESTINATION ${INSTALL_INCLUDE_DIR})
     # Required to ensure that MOAB is built before DAGMC and to properly link against MOAB
-    if(DDL_INSTALL_DEPS)
+    if(PULL_INSTALL_MOAB)
       add_dependencies(${lib_name}-shared MOAB)
       target_link_libraries(${lib_name}-shared PUBLIC ${MOAB_LIBRARY_DIRS}/libMOAB${CMAKE_SHARED_LIBRARY_SUFFIX})
     endif()

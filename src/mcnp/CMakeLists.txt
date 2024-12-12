@@ -18,7 +18,7 @@ add_library(mcnp_funcs OBJECT mcnp_funcs.cpp)
 message(STATUS "Building object library: meshtal_funcs")
 add_library(meshtal_funcs OBJECT meshtal_funcs.cpp)
 
-if(DDL_INSTALL_DEPS)
+if(PULL_INSTALL_MOAB)
   add_dependencies(mcnp_funcs MOAB)
   add_dependencies(meshtal_funcs MOAB)
 endif()

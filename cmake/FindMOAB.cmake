@@ -12,9 +12,9 @@ find_path(MOAB_CMAKE_CONFIG
 )
 
 # First check if we are forcing the download of MOAB
-if (DDL_INSTALL_DEPS)
+if (PULL_INSTALL_MOAB)
   if(DAGMC_BUILD_STATIC_LIBS)
-    message(FATAL_ERROR "DDL_INSTALL_DEPS is ONLY compatible with shared libraries.")
+    message(FATAL_ERROR "PULL_INSTALL_MOAB is ONLY compatible with shared libraries.")
   endif()
   if(NOT MOAB_VERSION)
     set(MOAB_VERSION "5.5.1")
@@ -84,7 +84,7 @@ message(STATUS "MOAB_LIBRARY_DIRS: ${MOAB_LIBRARY_DIRS}")
 message(STATUS "MOAB_LIBRARIES_SHARED: ${MOAB_LIBRARIES_SHARED}")
 message(STATUS "MOAB_LIBRARIES_STATIC: ${MOAB_LIBRARIES_STATIC}")
 
-if(DDL_INSTALL_DEPS)
+if(PULL_INSTALL_MOAB)
   message(STATUS "MOAB will be downloaded and built at make time")
 elseif (MOAB_INCLUDE_DIRS AND (MOAB_LIBRARIES_SHARED OR NOT BUILD_SHARED_LIBS) AND
     (MOAB_LIBRARIES_STATIC OR NOT BUILD_STATIC_LIBS))
