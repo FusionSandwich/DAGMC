@@ -13,12 +13,12 @@ find_path(MOAB_CMAKE_CONFIG
 
 # First check if we are forcing the download of MOAB
 if (DDL_INSTALL_DEPS)
-  IF(DAGMC_BUILD_STATIC_LIBS)
+  if(DAGMC_BUILD_STATIC_LIBS)
     message(FATAL_ERROR "DDL_INSTALL_DEPS is ONLY compatible with shared libraries.")
-  ENDIF()
-  # IF(NOT MOAB_VERSION)
-  SET(MOAB_VERSION "master")
-  # ENDIF()
+  endif()
+  if(NOT MOAB_VERSION)
+    set(MOAB_VERSION "5.5.1")
+  endif()
   include(MOAB_PullAndMake)
   moab_pull_make(${MOAB_VERSION})
 
