@@ -111,6 +111,7 @@ jobs:
                 -DBUILD_MAKE_WATERTIGHT=ON \
                 -DBUILD_OVERLAP_CHECK=OFF \
                 -DBUILD_TESTS=ON \
+                -G"Visual Studio 16 2019"  \          
                 -DMOAB_DIR=../install_dir \
                 -DHDF5_ROOT="${CONDA_LOC}" \
                 -DHDF5_hdf5_LIBRARY_RELEASE="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
@@ -120,7 +121,9 @@ jobs:
                 -DCMAKE_STATIC_LINKER_FLAGS="" \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
                 -DCMAKE_INSTALL_PREFIX=../install_dir/ \
-                -DCMAKE_BUILD_TYPE=Release
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_C_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe" \
+                -DCMAKE_CXX_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe"                
           cmake --build . --config Release
           cmake --install . --config Release
 
