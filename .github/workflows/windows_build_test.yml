@@ -3,33 +3,33 @@ name: Windows Build/Test
 on:
   # allows us to run workflows manually
   workflow_dispatch:
-  pull_request:
-    branches:
-      - develop
-    paths-ignore:
-      - '.github/workflows/docker_publish.yml'
-      - '.github/workflows/linux_build_test.yml'
-      - '.github/workflows/linux_upstream_test_*'
-      - '.github/workflows/mac_build_test.yml'
-      - '.github/workflows/housekeeping.yml'
-      - '.github/workflows/changelog_test.yml'
-      - '.github/actions/**'
-      - 'CI/**'
-      - 'doc/**'
+  # pull_request:
+  #   branches:
+  #     - develop
+  #   paths-ignore:
+  #     - '.github/workflows/docker_publish.yml'
+  #     - '.github/workflows/linux_build_test.yml'
+  #     - '.github/workflows/linux_upstream_test_*'
+  #     - '.github/workflows/mac_build_test.yml'
+  #     - '.github/workflows/housekeeping.yml'
+  #     - '.github/workflows/changelog_test.yml'
+  #     - '.github/actions/**'
+  #     - 'CI/**'
+  #     - 'doc/**'
 
-  push:
-    branches:
-      - develop
-    paths-ignore:
-      - '.github/workflows/docker_publish.yml'
-      - '.github/workflows/linux_build_test.yml'
-      - '.github/workflows/linux_upstream_test_*'
-      - '.github/workflows/mac_build_test.yml'
-      - '.github/workflows/housekeeping.yml'
-      - '.github/workflows/changelog_test.yml'
-      - '.github/actions/**'
-      - 'CI/**'
-      - 'doc/**'
+  # push:
+  #   branches:
+  #     - develop
+  #   paths-ignore:
+  #     - '.github/workflows/docker_publish.yml'
+  #     - '.github/workflows/linux_build_test.yml'
+  #     - '.github/workflows/linux_upstream_test_*'
+  #     - '.github/workflows/mac_build_test.yml'
+  #     - '.github/workflows/housekeeping.yml'
+  #     - '.github/workflows/changelog_test.yml'
+  #     - '.github/actions/**'
+  #     - 'CI/**'
+  #     - 'doc/**'
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
