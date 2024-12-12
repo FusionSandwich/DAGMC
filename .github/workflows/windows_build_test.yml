@@ -111,7 +111,6 @@ jobs:
                 -DBUILD_MAKE_WATERTIGHT=ON \
                 -DBUILD_OVERLAP_CHECK=OFF \
                 -DBUILD_TESTS=ON \
-                -G"Visual Studio 16 2019"  \          
                 -DMOAB_DIR=../install_dir \
                 -DHDF5_ROOT="${CONDA_LOC}" \
                 -DHDF5_hdf5_LIBRARY_RELEASE="${CONDA_LOC}/lib/libhdf5_hl.lib;${CONDA_LOC}/lib/libhdf5.lib;${CONDA_LOC}/lib/zlib.lib;${CONDA_LOC}/lib/libhdf5_cpp.lib" \
