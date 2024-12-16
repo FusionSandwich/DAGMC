@@ -81,8 +81,8 @@ TEST_F(DagmcMetadataTest, TestMatAssigns) {
   }
 }
 //---------------------------------------------------------------------------//
-// FIXTURE-BASED TESTS: Tests to make sure that all volumes have successfully
-// been assigned and successfully retreved from the metadata class
+// FIXTURE-BASED TESTS: Tests to make sure that vacuum detection is done 
+// properly
 //---------------------------------------------------------------------------//
 TEST_F(DagmcMetadataTest, TestVacuumName) {
   // Test default behavior for vacuum name
@@ -92,14 +92,11 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
     // process
     dgm->load_property_data();
 
-
-    std::string base_property = "mat:Hydrogen";
-    std::string impl_comp_prop = "mat:Vacuum";
-
     int num_vol = DAG->num_entities(3);
     std::vector<int> vol_ids = {1, 2, 3, 4};
 
-    std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen", "Vacuum"};
+    std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen",
+                                             "Vacuum"};
     for (int id : vol_ids){
       std::string mat_prop = dgm->get_volume_property("material", id, false);
       EXPECT_EQ(mat_prop, vacuum_names[id-1]);
@@ -115,7 +112,8 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
     int num_vol = DAG->num_entities(3);
     std::vector<int> vol_ids = {1, 2, 3, 4};
 
-    std::vector<std::string> vacuum_names = {"Vacuum", "Vacuum", "Vacuum", "Vacuum"};
+    std::vector<std::string> vacuum_names = {"Vacuum", "Vacuum", "Vacuum",
+                                             "Vacuum"};
     for (int id : vol_ids){
       std::string mat_prop = dgm->get_volume_property("material", id, false);
       EXPECT_EQ(mat_prop, vacuum_names[id-1]);
@@ -131,7 +129,8 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
     int num_vol = DAG->num_entities(3);
     std::vector<int> vol_ids = {1, 2, 3, 4};
 
-    std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen", "Vacuum"};
+    std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen",
+                                             "Vacuum"};
     for (int id : vol_ids){
       std::string mat_prop = dgm->get_volume_property("material", id, false);
       EXPECT_EQ(mat_prop, vacuum_names[id-1]);
