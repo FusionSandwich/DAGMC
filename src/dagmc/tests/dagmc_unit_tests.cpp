@@ -81,7 +81,7 @@ TEST_F(DagmcMetadataTest, TestMatAssigns) {
   }
 }
 //---------------------------------------------------------------------------//
-// FIXTURE-BASED TESTS: Tests to make sure that vacuum detection is done 
+// FIXTURE-BASED TESTS: Tests to make sure that vacuum detection is done
 // properly
 //---------------------------------------------------------------------------//
 TEST_F(DagmcMetadataTest, TestVacuumName) {
