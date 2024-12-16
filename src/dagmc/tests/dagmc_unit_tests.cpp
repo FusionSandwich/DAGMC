@@ -97,9 +97,9 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
 
     std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen",
                                              "Vacuum"};
-    for (int id : vol_ids){
+    for (int id : vol_ids) {
       std::string mat_prop = dgm->get_volume_property("material", id, false);
-      EXPECT_EQ(mat_prop, vacuum_names[id-1]);
+      EXPECT_EQ(mat_prop, vacuum_names[id - 1]);
     }
   }
 
@@ -114,9 +114,9 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
 
     std::vector<std::string> vacuum_names = {"Vacuum", "Vacuum", "Vacuum",
                                              "Vacuum"};
-    for (int id : vol_ids){
+    for (int id : vol_ids) {
       std::string mat_prop = dgm->get_volume_property("material", id, false);
-      EXPECT_EQ(mat_prop, vacuum_names[id-1]);
+      EXPECT_EQ(mat_prop, vacuum_names[id - 1]);
     }
   }
 
@@ -131,9 +131,9 @@ TEST_F(DagmcMetadataTest, TestVacuumName) {
 
     std::vector<std::string> vacuum_names = {"Hydrogen", "Hydrogen", "Hydrogen",
                                              "Vacuum"};
-    for (int id : vol_ids){
+    for (int id : vol_ids) {
       std::string mat_prop = dgm->get_volume_property("material", id, false);
-      EXPECT_EQ(mat_prop, vacuum_names[id-1]);
+      EXPECT_EQ(mat_prop, vacuum_names[id - 1]);
     }
   }
 }
