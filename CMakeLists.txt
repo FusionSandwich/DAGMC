@@ -1,15 +1,16 @@
 project(DAGMC)
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.18)
 enable_language(CXX)
 
 # Set DAGMC version
 set(DAGMC_MAJOR_VERSION 3)
 set(DAGMC_MINOR_VERSION 2)
-set(DAGMC_PATCH_VERSION 3)
+set(DAGMC_PATCH_VERSION 4)
 set(DAGMC_VERSION ${DAGMC_MAJOR_VERSION}.${DAGMC_MINOR_VERSION}.${DAGMC_PATCH_VERSION})
 
 if(MSVC)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  add_definitions( -DH5_BUILT_AS_DYNAMIC_LIB )
 endif()
 
 
@@ -29,22 +30,6 @@ if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   endif()
 
   option(GIT_SUBMODULE "Check submodules during build" ON)
-  if(GIT_SUBMODULE)
-    message(STATUS "Submodule update")
-    execute_process(COMMAND ${GIT_EXECUTABLE} "submodule" "update" "--init" "--recursive"
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL 0)
-      message(FATAL_ERROR "git submodule update --init --recursive failed with \
-        ${GIT_SUBMOD_RESULT}, please checkout submodules")
-    endif()
-  endif()
-endif()
-
-# Check to see if submodules exist (by checking one)
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/pyne/pyne/readme.rst")
-  message(FATAL_ERROR "The git submodules were not downloaded! GIT_SUBMODULE was \
-    turned off or failed. Please update submodules and try again.")
 endif()
 
 # Make the scripts in the "cmake" directory available to CMake
