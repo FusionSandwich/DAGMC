@@ -86,7 +86,7 @@ ENDMACRO(moab_pull_make)
 MACRO (moab_autobuild_check_deps)
 # First check IF we are forcing the download of MOAB
 IF (PULL_INSTALL_MOAB)
-  IF (NOT DEFINED HDF5_ROOT or not DEFINED ${HDF5_ROOT})
+  IF (NOT DEFINED HDF5_ROOT)
     MESSAGE(FATAL_ERROR "HDF5_ROOT is required to build MOAB")
   ENDIF()
 
