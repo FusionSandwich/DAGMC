@@ -1,5 +1,5 @@
 project(DAGMC)
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.18)
 enable_language(CXX)
 
 # Set DAGMC version
@@ -44,7 +44,14 @@ if(BUILD_MCNP5 OR BUILD_MCNP6)
   enable_language(Fortran)
 endif()
 
-find_package(MOAB REQUIRED)
+# Dealing with MOAB
+if (PULL_INSTALL_MOAB)
+  include(MOAB_PullAndMake)
+  moab_pull_make(${MOAB_VERSION}
+else()
+  find_package(MOAB REQUIRED)
+endif()
+
 find_package(OpenMP)
 
 dagmc_setup_flags()
