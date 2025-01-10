@@ -74,11 +74,6 @@ MACRO (moab_pull_make)
   MESSAGE(STATUS "MOAB_LIBRARIES_SHARED: ${MOAB_LIBRARIES_SHARED}")
 
   INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
-  IF (MOAB_INCLUDE_DIRS AND (MOAB_LIBRARIES_SHARED))
-  MESSAGE(STATUS "MOAB Will be installed.")
-  ELSE ()
-  MESSAGE(FATAL_ERROR "Could not set MOAB for installation and compilation.")
-    ENDIF ()
 
 ENDMACRO(moab_pull_make)
 
