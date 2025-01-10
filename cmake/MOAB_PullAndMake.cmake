@@ -1,7 +1,7 @@
 # This Macro sets up the download and build of MOAB using ExternalProject
 # few tweak are done in src/dagmc/CMakeLists.txt and src/PyNE/CMakeists.txt 
 # to make sure that MOAB is built before DAGMC.
-MACRO (moab_pull_make moab_version)
+MACRO (moab_pull_make)
   MESSAGE(STATUS "MOAB will be downloaded and built")
   
   # Ensure STATIC LIBS Build

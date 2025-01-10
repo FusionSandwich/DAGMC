@@ -47,7 +47,7 @@ endif()
 # Dealing with MOAB
 if (PULL_INSTALL_MOAB)
   include(MOAB_PullAndMake)
-  moab_pull_make(${MOAB_VERSION})
+  moab_pull_make()
 else()
   find_package(MOAB REQUIRED)
 endif()
