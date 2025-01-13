@@ -1,3 +1,5 @@
+# This leverage HDF5_macro.cmake in order to find HDF5 libraries.
+
 message("")
 
 # Find MOAB cmake config file

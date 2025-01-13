@@ -46,8 +46,12 @@ endif()
 
 # Dealing with MOAB
 if (PULL_INSTALL_MOAB)
+  # Ensure MOAB_VERSION
+  if(NOT DEFINED MOAB_VERSION)
+    set(MOAB_VERSION "5.5.1")
+  endif()
   include(MOAB_PullAndMake)
-  moab_pull_make()
+  moab_pull_make(${MOAB_VERSION})
 else()
   find_package(MOAB REQUIRED)
 endif()
