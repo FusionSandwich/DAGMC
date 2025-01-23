@@ -7,6 +7,9 @@ DAGMC Changelog
 Next version
 ====================
 
+**Changed:**
+  * Update formating of few files to comply with clang-format (#937)
+
 v3.2.4
 ====================
 
