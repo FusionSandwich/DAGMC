@@ -106,6 +106,17 @@ To build moab using the default packages:
     $ make check
     $ make install
 
+If you whish to avoid building MOAB from source, it is possible to build it at
+the same time as DAGMC by setting the ``PULL_INSTALL_MOAB`` option to the 
+desired MOAB version. This will automatically download and build MOAB as a 
+dependency of DAGMC. When using this option it is assumed that HDF5 is properly
+installed on your computer and you will need to provide its location for the 
+MOAB installation. For example, to build MOAB version 5.5.1, you would add the 
+following flag to the cmake command when building DAGMC:
+::
+
+    $ cmake ../dagmc -DPULL_INSTALL_MOAB=5.5.1 -DHDF5_ROOT=PATH_TO_HDF5
+
 Making sure the dependencies were installed correctly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
