@@ -49,7 +49,7 @@ if (PULL_INSTALL_MOAB)
   set(MOAB_VERSION ${PULL_INSTALL_MOAB})  
 
   # Ensure MOAB_VERSION
-  if(${MOAB_VERSION})
+  if(NOT ${MOAB_VERSION} MATCHES "[.\..\..]")
     MESSAGE("NO MOAB_VERSION specified. Defaulting to 5.5.1")
     set(MOAB_VERSION "5.5.1")
   endif()
