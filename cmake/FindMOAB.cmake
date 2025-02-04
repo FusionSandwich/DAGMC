@@ -1,4 +1,4 @@
-# This leverage HDF5_macro.cmake in order to find HDF5 libraries.
+# This leverages HDF5_macro.cmake in order to find HDF5 libraries.
 
 message("")
 
