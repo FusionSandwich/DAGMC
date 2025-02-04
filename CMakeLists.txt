@@ -50,7 +50,7 @@ if (PULL_INSTALL_MOAB)
 
   # Ensure MOAB_VERSION
   if(NOT ${MOAB_VERSION} MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]")
-    MESSAGE("MOAB_VERSION: ${MOAB_VERSION} not reconnized. Defaulting to 5.5.1")
+    MESSAGE("MOAB_VERSION: ${MOAB_VERSION} not recognized. Defaulting to 5.5.1")
     set(MOAB_VERSION "5.5.1")
   endif()
   MESSAGE("MOAB_VERSION to be installed: ${MOAB_VERSION}")
