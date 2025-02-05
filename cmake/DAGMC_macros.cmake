@@ -257,9 +257,9 @@ macro (dagmc_install_library lib_name)
             PUBLIC_HEADER DESTINATION ${INSTALL_INCLUDE_DIR})
     # Required to ensure that MOAB is built before DAGMC and to properly link against MOAB
     if(PULL_INSTALL_MOAB)
-    target_link_libraries(${lib_name}-shared INTERFACE ${MOAB_LIBRARY_DIRS}/libMOAB${CMAKE_SHARED_LIBRARY_SUFFIX})
-    add_dependencies(${lib_name}-shared MOAB)
-     endif()
+      target_link_libraries(${lib_name}-shared PUBLIC ${MOAB_LIBRARY_DIRS}/libMOAB${CMAKE_SHARED_LIBRARY_SUFFIX})
+      add_dependencies(${lib_name}-shared MOAB)
+    endif()
   endif ()
 
   if (BUILD_STATIC_LIBS)
