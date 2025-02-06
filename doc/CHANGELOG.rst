@@ -10,6 +10,9 @@ Next version
 **Changed:**
   * Update formating of few files to comply with clang-format (#937)
 
+**Added:**
+  * Allow download & build of MOAB from cmake at build time (#969)
+
 v3.2.4
 ====================
 
