@@ -9,9 +9,14 @@ Next version
 
 **Changed:**
   * Update formating of few files to comply with clang-format (#937)
+  * Update default HDF5 version to 1.14.6 (#976)
 
 **Added:**
   * Allow download & build of MOAB from cmake at build time (#969)
+
+**Fixed**
+  * Fixed HDF5 naming convention for docker container building and naming (#976)
+
 
 v3.2.4
 ====================
