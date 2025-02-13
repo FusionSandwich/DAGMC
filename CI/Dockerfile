@@ -5,7 +5,7 @@
 
 # Global arguments set before the first build stage are accessable by all build stages
 ARG UBUNTU_VERSION=22.04
-ARG HDF5_VERSION=1.14.6
+ARG HDF5_VERSION=1_14_6
 ARG MOAB_VERSION=5.5.1
 # Setting GEANT4_VERSION=off will disable GEANT4 build
 ARG GEANT4_VERSION=v11.2.1
