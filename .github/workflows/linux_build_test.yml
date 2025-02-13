@@ -44,7 +44,7 @@ jobs:
           clang,
         ]
         hdf5_version : [
-          1_14_6,
+          1.14.3,
         ]
         moab_version : [
           5.4.1,
@@ -64,7 +64,7 @@ jobs:
         include:
           - ubuntu_version: 22.04
             compiler: gcc
-            hdf5_version: 1_14_6
+            hdf5_version: 1.14.3
             moab_version: 5.4.1
             pull_install_moab: on
             geant4_version: off
