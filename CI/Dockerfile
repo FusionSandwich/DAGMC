@@ -136,7 +136,7 @@ ENV HDF5_INSTALL_DIR=${INSTALL_DIR}/hdf5
 
 RUN mkdir -p ${HDF5_BUILD_DIR}/build && \
     cd ${HDF5_BUILD_DIR} && \
-    git clone -b HDF5_${HDF5_VERSION} --depth 1 https://github.com/HDFGroup/hdf5.git && \
+    git clone -b hdf5_${HDF5_VERSION} --depth 1 https://github.com/HDFGroup/hdf5.git && \
     cd build && \
     cmake ../hdf5 \
         -DCMAKE_INSTALL_PREFIX=${HDF5_INSTALL_DIR} \
