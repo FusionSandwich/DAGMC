@@ -83,7 +83,7 @@ jobs:
                 matrix.geant4_version
               }}-double_down_${{
                 matrix.double_down_version
-              }}/moab:latest
+              }}/external_deps:latest
 
     steps:
       - name: Checkout repository
