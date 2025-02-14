@@ -9,7 +9,7 @@ Next version
 
 **Changed:**
   * Update formating of few files to comply with clang-format (#937)
-  * Update default HDF5 version to 1.14.6 (#976)
+  * Update default HDF5 version to 1.14.6 (#976, #978)
 
 **Added:**
   * Allow download & build of MOAB from cmake at build time (#969)
