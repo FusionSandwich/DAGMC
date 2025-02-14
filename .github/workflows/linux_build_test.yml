@@ -54,8 +54,8 @@ jobs:
           off,
         ]
         geant4_version : [
-          10.7.4,
-          11.1.2
+          v10.7.4,
+          v11.1.2
         ]
         double_down_version : [
           off,
