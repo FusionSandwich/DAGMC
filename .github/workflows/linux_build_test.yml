@@ -97,10 +97,10 @@ jobs:
           mkdir -p build
           cd build
           cmake ../ \
-              -DMOAB_DIR=${moab_install_dir} \
+              -DMOAB_DIR=${MOAB_INSTALL_DIR} \
               -DBUILD_GEANT4=$([ "${{ matrix.geant4_version }}" != "off" ] && echo "ON" || echo "OFF") \
-              -DPULL_INSTALL_MOAB=$([ "${{ matrix.pull_install_moab }}" != "on" ] && echo "OFF" || echo "ON -DHDF5_ROOT=${hdf5_install_dir}") \
-              -DGEANT4_DIR=${geant4_install_dir} \
+              -DPULL_INSTALL_MOAB=$([ "${{ matrix.pull_install_moab }}" != "on" ] && echo "OFF" || echo "ON -DHDF5_ROOT=${HDF5_INSTALL_DIR}") \
+              -DGEANT4_DIR=${GEANT4_INSTALL_DIR} \
               -DBUILD_CI_TESTS=ON \
               -DBUILD_MW_REG_TESTS=OFF \
               -DBUILD_STATIC_EXE=OFF \
