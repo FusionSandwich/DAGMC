@@ -15,6 +15,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #ifdef DOUBLE_DOWN
 #include "double_down/RTI.hpp"
@@ -49,7 +50,7 @@ const std::map<std::string, std::string> DagMC::no_synonyms;
 // DagMC Constructor
 DagMC::DagMC(std::shared_ptr<moab::Interface> mb_impl, double overlap_tolerance,
              double p_numerical_precision, int verbosity)
-    : logger(verbosity) {
+    : logger(verbosity), lengthMultiplier(1.0), geometry_scaled(false) {
 #ifdef DOUBLE_DOWN
   logger.message("Using the DOUBLE-DOWN interface to Embree.");
 #endif
@@ -78,7 +79,7 @@ DagMC::DagMC(std::shared_ptr<moab::Interface> mb_impl, double overlap_tolerance,
 
 DagMC::DagMC(Interface* mb_impl, double overlap_tolerance,
              double p_numerical_precision, int verbosity)
-    : logger(verbosity) {
+    : logger(verbosity), lengthMultiplier(1.0), geometry_scaled(false) {
   moab_instance_created = false;
   // set the internal moab pointer
   MBI = mb_impl;
@@ -93,6 +94,19 @@ DagMC::DagMC(Interface* mb_impl, double overlap_tolerance,
 #endif
   this->set_overlap_thickness(overlap_tolerance);
   this->set_numerical_precision(p_numerical_precision);
+}
+
+void DagMC::set_length_multiplier(double multiplier) {
+  if (multiplier <= 0.0) {
+    throw std::invalid_argument("DagMC length multiplier must be positive.");
+  }
+
+  if (geometry_scaled) {
+    throw std::logic_error(
+        "Cannot change the length multiplier after geometry has been loaded.");
+  }
+
+  lengthMultiplier = multiplier;
 }
 
 // Destructor
@@ -134,6 +148,7 @@ ErrorCode DagMC::load_file(const char* cfile) {
   rval = MBI->create_meshset(MESHSET_SET, file_set);
   if (MB_SUCCESS != rval) return rval;
 
+  geometry_scaled = false;
   rval = MBI->load_file(cfile, &file_set, options, NULL, 0, 0);
 
   if (MB_UNHANDLED_OPTION == rval) {
@@ -155,11 +170,53 @@ ErrorCode DagMC::load_file(const char* cfile) {
     return rval;
   }
 
+  rval = apply_length_scale();
+  MB_CHK_SET_ERR(rval, "Failed to apply length scaling to geometry vertices.");
+
   return finish_loading();
 }
 
 // helper function to load the existing contents of a MOAB instance into DAGMC
-ErrorCode DagMC::load_existing_contents() { return finish_loading(); }
+ErrorCode DagMC::load_existing_contents() {
+  geometry_scaled = false;
+  ErrorCode rval = apply_length_scale();
+  MB_CHK_SET_ERR(rval, "Failed to apply length scaling to geometry vertices.");
+  return finish_loading();
+}
+
+ErrorCode DagMC::apply_length_scale() {
+  if (geometry_scaled) {
+    return MB_SUCCESS;
+  }
+
+  if (lengthMultiplier == 1.0) {
+    geometry_scaled = true;
+    return MB_SUCCESS;
+  }
+
+  Range vertices;
+  ErrorCode rval = MBI->get_entities_by_type(0, MBVERTEX, vertices);
+  MB_CHK_SET_ERR(rval, "Failed to retrieve mesh vertices for scaling.");
+
+  if (vertices.empty()) {
+    geometry_scaled = true;
+    return MB_SUCCESS;
+  }
+
+  std::vector<double> coords(3 * vertices.size());
+  rval = MBI->get_coords(vertices, coords.data());
+  MB_CHK_SET_ERR(rval, "Failed to retrieve vertex coordinates for scaling.");
+
+  for (double& value : coords) {
+    value *= lengthMultiplier;
+  }
+
+  rval = MBI->set_coords(vertices, coords.data());
+  MB_CHK_SET_ERR(rval, "Failed to update vertex coordinates for scaling.");
+
+  geometry_scaled = true;
+  return MB_SUCCESS;
+}
 
 // setup the implicit compliment
 ErrorCode DagMC::setup_impl_compl() {

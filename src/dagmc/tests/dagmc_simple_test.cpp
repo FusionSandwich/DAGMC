@@ -108,6 +108,89 @@ TEST_F(DagmcSimpleTest, dagmc_load_file_dagmc_internal_build_obb) {
   EXPECT_EQ(rval, MB_SUCCESS);
 }
 
+TEST_F(DagmcSimpleTest, dagmc_length_multiplier_scales_vertices) {
+  DagMC baseline;
+  ErrorCode rval = baseline.load_file(input_file);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  Range base_vertices;
+  rval = baseline.moab_instance()->get_entities_by_type(0, MBVERTEX,
+                                                       base_vertices);
+  ASSERT_EQ(rval, MB_SUCCESS);
+  ASSERT_FALSE(base_vertices.empty());
+
+  EntityHandle base_vertex = *base_vertices.begin();
+  double base_coords[3] = {0.0, 0.0, 0.0};
+  rval = baseline.moab_instance()->get_coords(&base_vertex, 1, base_coords);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  const double scale = 0.25;
+  DagMC scaled;
+  scaled.set_length_multiplier(scale);
+  rval = scaled.load_file(input_file);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  Range scaled_vertices;
+  rval = scaled.moab_instance()->get_entities_by_type(0, MBVERTEX,
+                                                      scaled_vertices);
+  ASSERT_EQ(rval, MB_SUCCESS);
+  ASSERT_FALSE(scaled_vertices.empty());
+
+  EntityHandle scaled_vertex = *scaled_vertices.begin();
+  double scaled_coords[3] = {0.0, 0.0, 0.0};
+  rval = scaled.moab_instance()->get_coords(&scaled_vertex, 1, scaled_coords);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  for (int i = 0; i < 3; ++i) {
+    double expected = base_coords[i] * scale;
+    double magnitude = expected >= 0.0 ? expected : -expected;
+    EXPECT_NEAR(expected, scaled_coords[i], magnitude * 1e-12 + 1e-15);
+  }
+}
+
+TEST_F(DagmcSimpleTest, dagmc_length_multiplier_existing_contents) {
+  DagMC baseline;
+  ErrorCode rval = baseline.load_file(input_file);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  Range base_vertices;
+  rval = baseline.moab_instance()->get_entities_by_type(0, MBVERTEX,
+                                                       base_vertices);
+  ASSERT_EQ(rval, MB_SUCCESS);
+  ASSERT_FALSE(base_vertices.empty());
+
+  EntityHandle base_vertex = *base_vertices.begin();
+  double base_coords[3] = {0.0, 0.0, 0.0};
+  rval = baseline.moab_instance()->get_coords(&base_vertex, 1, base_coords);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  const double scale = 3.5;
+  std::shared_ptr<Interface> mbi = std::make_shared<Core>();
+  rval = mbi->load_file(input_file);
+  ASSERT_EQ(rval, MB_SUCCESS);
+  DagMC dagmc(mbi);
+  dagmc.set_length_multiplier(scale);
+  rval = dagmc.load_existing_contents();
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  Range scaled_vertices;
+  rval = dagmc.moab_instance()->get_entities_by_type(0, MBVERTEX,
+                                                     scaled_vertices);
+  ASSERT_EQ(rval, MB_SUCCESS);
+  ASSERT_FALSE(scaled_vertices.empty());
+
+  EntityHandle scaled_vertex = *scaled_vertices.begin();
+  double scaled_coords[3] = {0.0, 0.0, 0.0};
+  rval = dagmc.moab_instance()->get_coords(&scaled_vertex, 1, scaled_coords);
+  ASSERT_EQ(rval, MB_SUCCESS);
+
+  for (int i = 0; i < 3; ++i) {
+    double expected = base_coords[i] * scale;
+    double magnitude = expected >= 0.0 ? expected : -expected;
+    EXPECT_NEAR(expected, scaled_coords[i], magnitude * 1e-12 + 1e-15);
+  }
+}
+
 TEST_F(DagmcSimpleTest, dagmc_test_obb_retreval) {
   // make new dagmc
   std::cout << "test_obb_retreval" << std::endl;

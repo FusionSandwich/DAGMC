@@ -128,6 +128,12 @@ class DagMC {
    */
   ErrorCode load_existing_contents();
 
+  /** Set a uniform scaling factor applied to all vertex coordinates at load. */
+  void set_length_multiplier(double multiplier);
+
+  /** Retrieve the scaling factor that will be applied at load. */
+  double length_multiplier() const { return lengthMultiplier; }
+
   /**\brief initializes the geometry and OBB tree structure for ray firing
    * acceleration
    *
@@ -714,6 +720,11 @@ class DagMC {
 
   /** logger **/
   DagMC_Logger logger;
+
+  ErrorCode apply_length_scale();
+
+  double lengthMultiplier;
+  bool geometry_scaled;
 
   // axis-aligned box used to track geometry bounds
   // (internal use only)
