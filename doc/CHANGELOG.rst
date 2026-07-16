@@ -13,6 +13,7 @@ Next version
 
 **Added:**
   * Allow download & build of MOAB from cmake at build time (#969)
+  * Add a pre-load length multiplier for DAGMC geometry.
 
 **Fixed**
   * Fixed HDF5 naming convention for docker container building and naming (#976)

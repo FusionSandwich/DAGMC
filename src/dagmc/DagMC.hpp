@@ -128,6 +128,11 @@ class DagMC {
    */
   ErrorCode load_existing_contents();
 
+  //! Set the finite, positive scale applied when geometry is loaded.
+  void set_length_multiplier(double multiplier);
+
+  double length_multiplier() const { return lengthMultiplier; }
+
   /**\brief initializes the geometry and OBB tree structure for ray firing
    * acceleration
    *
@@ -203,6 +208,14 @@ class DagMC {
 
   /** loading code shared by load_file and load_existing_contents */
   ErrorCode finish_loading();
+
+  ErrorCode apply_length_scale(EntityHandle entity_set);
+
+  ErrorCode scale_length_metadata(EntityHandle entity_set,
+                                  const Range& surfaces, const Range& volumes);
+
+  ErrorCode delete_obb_trees(EntityHandle entity_set, const Range& surfaces,
+                             const Range& volumes);
 
   /* SECTION II: Fundamental Geometry Operations/Queries */
  public:
@@ -706,6 +719,8 @@ class DagMC {
   char implComplName[NAME_TAG_SIZE];
 
   double facetingTolerance;
+  double lengthMultiplier = 1.0;
+  bool lengthMultiplierLocked = false;
 
   /** vectors for point_in_volume: */
   std::vector<double> disList;
