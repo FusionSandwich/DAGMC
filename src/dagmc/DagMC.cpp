@@ -9,12 +9,15 @@
 #include <algorithm>
 #include <array>
 #include <climits>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <set>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 #ifdef DOUBLE_DOWN
 #include "double_down/RTI.hpp"
@@ -27,6 +30,7 @@
 
 #define MB_OBB_TREE_TAG_NAME "OBB_TREE"
 #define FACETING_TOL_TAG_NAME "FACETING_TOL"
+#define GEOMETRY_RESABS_TAG_NAME "GEOMETRY_RESABS"
 static const int null_delimiter_length = 1;
 
 namespace moab {
@@ -95,6 +99,16 @@ DagMC::DagMC(Interface* mb_impl, double overlap_tolerance,
   this->set_numerical_precision(p_numerical_precision);
 }
 
+void DagMC::set_length_multiplier(double multiplier) {
+  if (!std::isfinite(multiplier) || multiplier <= 0.0)
+    throw std::invalid_argument(
+        "Length multiplier must be positive and finite.");
+  if (lengthMultiplierLocked)
+    throw std::logic_error(
+        "Length multiplier cannot be changed after loading.");
+  lengthMultiplier = multiplier;
+}
+
 // Destructor
 DagMC::~DagMC() {
   // if we created the moab instance
@@ -116,6 +130,10 @@ float DagMC::version(std::string* version_string) {
 
 // the standard DAGMC load file method
 ErrorCode DagMC::load_file(const char* cfile) {
+  if (lengthMultiplier != 1.0 && lengthMultiplierLocked) {
+    MB_SET_ERR(MB_FAILURE, "Length scaling has already been applied.");
+  }
+
   ErrorCode rval;
   std::string filename(cfile);
   std::stringstream ss;
@@ -155,11 +173,152 @@ ErrorCode DagMC::load_file(const char* cfile) {
     return rval;
   }
 
-  return finish_loading();
+  rval = apply_length_scale(file_set);
+  MB_CHK_SET_ERR(rval, "Failed to scale geometry.");
+
+  rval = finish_loading();
+  if (MB_SUCCESS == rval) {
+    lengthMultiplierLocked = true;
+  }
+  return rval;
 }
 
 // helper function to load the existing contents of a MOAB instance into DAGMC
-ErrorCode DagMC::load_existing_contents() { return finish_loading(); }
+ErrorCode DagMC::load_existing_contents() {
+  if (lengthMultiplier != 1.0 && lengthMultiplierLocked) {
+    MB_SET_ERR(MB_FAILURE, "Length scaling has already been applied.");
+  }
+
+  ErrorCode rval = apply_length_scale(0);
+  MB_CHK_SET_ERR(rval, "Failed to scale geometry.");
+
+  rval = finish_loading();
+  if (MB_SUCCESS == rval) {
+    lengthMultiplierLocked = true;
+  }
+  return rval;
+}
+
+ErrorCode DagMC::apply_length_scale(EntityHandle entity_set) {
+  if (lengthMultiplier == 1.0) return MB_SUCCESS;
+
+  GeomTopoTool scaled_geometry(MBI, false, entity_set);
+  ErrorCode rval = scaled_geometry.find_geomsets();
+  MB_CHK_SET_ERR(rval, "Failed to find geometry sets.");
+
+  Range surfaces, volumes;
+  rval = scaled_geometry.get_gsets_by_dimension(2, surfaces);
+  MB_CHK_SET_ERR(rval, "Failed to retrieve geometry surfaces.");
+  rval = scaled_geometry.get_gsets_by_dimension(3, volumes);
+  MB_CHK_SET_ERR(rval, "Failed to retrieve geometry volumes.");
+
+  Range triangles;
+  for (EntityHandle surface : surfaces) {
+    rval = MBI->get_entities_by_type(surface, MBTRI, triangles, true);
+    MB_CHK_SET_ERR(rval, "Failed to retrieve geometry triangles.");
+  }
+
+  Range vertices;
+  rval = MBI->get_adjacencies(triangles, 0, false, vertices, Interface::UNION);
+  MB_CHK_SET_ERR(rval, "Failed to retrieve geometry vertices.");
+
+  std::vector<double> coords(3 * vertices.size());
+  rval = MBI->get_coords(vertices, coords.data());
+  MB_CHK_SET_ERR(rval, "Failed to retrieve vertex coordinates.");
+  for (double& value : coords) value *= lengthMultiplier;
+
+  lengthMultiplierLocked = true;
+  rval = delete_obb_trees(entity_set, surfaces, volumes);
+  MB_CHK_SET_ERR(rval, "Failed to delete stale OBB trees.");
+
+  rval = MBI->set_coords(vertices, coords.data());
+  MB_CHK_SET_ERR(rval, "Failed to update vertex coordinates.");
+  return scale_length_metadata(entity_set, surfaces, volumes);
+}
+
+ErrorCode DagMC::scale_length_metadata(EntityHandle entity_set,
+                                       const Range& surfaces,
+                                       const Range& volumes) {
+  Range geometry_sets = surfaces;
+  geometry_sets.merge(volumes);
+
+  const char* tag_names[] = {FACETING_TOL_TAG_NAME, GEOMETRY_RESABS_TAG_NAME};
+  for (const char* tag_name : tag_names) {
+    Tag tag;
+    ErrorCode rval = MBI->tag_get_handle(tag_name, tag);
+    if (rval == MB_TAG_NOT_FOUND) continue;
+    MB_CHK_SET_ERR(rval, "Failed to retrieve length metadata.");
+
+    Range tagged_sets;
+    rval = MBI->get_entities_by_type_and_tag(0, MBENTITYSET, &tag, NULL, 1,
+                                             tagged_sets);
+    MB_CHK_SET_ERR(rval, "Failed to find length metadata.");
+
+    Range geometry_metadata;
+    for (EntityHandle tagged_set : tagged_sets) {
+      Range contained_sets;
+      rval = MBI->get_entities_by_type(tagged_set, MBENTITYSET, contained_sets,
+                                       true);
+      MB_CHK_SET_ERR(rval, "Failed to inspect length metadata.");
+      if (geometry_sets.find(tagged_set) != geometry_sets.end() ||
+          !intersect(contained_sets, geometry_sets).empty())
+        geometry_metadata.insert(tagged_set);
+    }
+
+    if (!geometry_metadata.empty()) {
+      std::vector<double> values(geometry_metadata.size());
+      rval = MBI->tag_get_data(tag, geometry_metadata, values.data());
+      MB_CHK_SET_ERR(rval, "Failed to read length metadata.");
+      for (double& value : values) value *= lengthMultiplier;
+      rval = MBI->tag_set_data(tag, geometry_metadata, values.data());
+      MB_CHK_SET_ERR(rval, "Failed to scale length metadata.");
+    }
+
+    if (entity_set == 0) {
+      const EntityHandle root = 0;
+      double value;
+      rval = MBI->tag_get_data(tag, &root, 1, &value);
+      if (rval == MB_SUCCESS) {
+        value *= lengthMultiplier;
+        rval = MBI->tag_set_data(tag, &root, 1, &value);
+        MB_CHK_SET_ERR(rval, "Failed to scale root length metadata.");
+      } else if (rval != MB_TAG_NOT_FOUND)
+        MB_CHK_SET_ERR(rval, "Failed to read root length metadata.");
+    }
+  }
+  return MB_SUCCESS;
+}
+
+ErrorCode DagMC::delete_obb_trees(EntityHandle entity_set,
+                                  const Range& surfaces, const Range& volumes) {
+  Tag root_tag;
+  ErrorCode rval = MBI->tag_get_handle("OBB_ROOT", root_tag);
+  if (rval == MB_TAG_NOT_FOUND) return MB_SUCCESS;
+  MB_CHK_SET_ERR(rval, "Failed to retrieve the OBB root tag.");
+
+  Range geometry_sets = surfaces;
+  geometry_sets.merge(volumes);
+  Range tree_nodes;
+  for (EntityHandle geometry_set : geometry_sets) {
+    EntityHandle root;
+    rval = MBI->tag_get_data(root_tag, &geometry_set, 1, &root);
+    if (rval == MB_TAG_NOT_FOUND) continue;
+    MB_CHK_SET_ERR(rval, "Failed to retrieve an OBB root.");
+
+    tree_nodes.insert(root);
+    Range descendants;
+    rval = MBI->get_child_meshsets(root, descendants, 0);
+    MB_CHK_SET_ERR(rval, "Failed to retrieve OBB tree nodes.");
+    tree_nodes.merge(descendants);
+
+    rval = MBI->tag_delete_data(root_tag, &geometry_set, 1);
+    MB_CHK_SET_ERR(rval, "Failed to clear an OBB root.");
+  }
+
+  if (entity_set != 0) tree_nodes.erase(entity_set);
+  if (tree_nodes.empty()) return MB_SUCCESS;
+  return MBI->delete_entities(tree_nodes);
+}
 
 // setup the implicit compliment
 ErrorCode DagMC::setup_impl_compl() {
